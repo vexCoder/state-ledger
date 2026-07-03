@@ -1,0 +1,11 @@
+packages:
+  - "apps/*"
+
+onlyBuiltDependencies:
+  - "@prisma/client"
+  - "@prisma/engines"
+  - prisma
+  - esbuild
+  - lmdb
+  - "@parcel/watcher"
+  - msgpackr-extract

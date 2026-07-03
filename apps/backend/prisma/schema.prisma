@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model State {
+  id            String         @id @default(uuid())
+  name          String
+  type          Int
+  daysThreshold Int
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  workflowItems WorkflowItem[]
+  ledgerEntries StateLedger[]
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  workflowItems WorkflowItem[]
+}
+
+model WorkflowItem {
+  id             String            @id @default(uuid())
+  name           String
+  currentStateId String
+  currentState   State             @relation(fields: [currentStateId], references: [id])
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  ledgerEntries  StateLedger[]
+}
+
+model StateLedger {
+  id             String       @id @default(uuid())
+  workflowItemId String
+  workflowItem   WorkflowItem @relation(fields: [workflowItemId], references: [id])
+  stateId        String
+  state          State        @relation(fields: [stateId], references: [id])
+  stateType      Int
+  dateStart      DateTime?
+  dateEnd        DateTime?
+}
