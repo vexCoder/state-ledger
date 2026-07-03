@@ -11,7 +11,7 @@ model State {
   id            String         @id @default(uuid())
   name          String
   type          Int
-  daysThreshold Int
+  daysThreshold Int?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   workflowItems WorkflowItem[]

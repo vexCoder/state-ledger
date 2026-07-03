@@ -7,7 +7,7 @@ export interface State {
   id: string;
   name: string;
   type: number;
-  daysThreshold: number;
+  daysThreshold: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,7 +22,7 @@ export interface SaveStatePayload {
   id?: string;
   name: string;
   type: number;
-  daysThreshold: number;
+  daysThreshold: number | null;
 }
 
 export interface User {

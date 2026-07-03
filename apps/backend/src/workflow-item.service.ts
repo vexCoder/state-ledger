@@ -79,7 +79,7 @@ export class WorkflowItemService {
       data: { currentStateId: stateId },
     });
 
-    this.events.emit(
+    await this.events.emitAsync(
       WORKFLOW_ITEM_STATE_CHANGED,
       new WorkflowItemStateChangedEvent(itemId, item.currentStateId, stateId, item.userId, now),
     );

@@ -9,7 +9,7 @@ interface MappingRow {
   id?: string;
   name: string;
   type: StateType;
-  daysThreshold: number;
+  daysThreshold: number | null;
 }
 
 @Component({
@@ -54,13 +54,28 @@ interface MappingRow {
                 </div>
               </td>
               <td class="border-r border-border p-0">
-                <input
-                  type="number"
-                  min="0"
-                  [(ngModel)]="row.daysThreshold"
-                  (ngModelChange)="markChanged()"
-                  class="h-11 w-full bg-transparent px-4 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
-                />
+                <div class="flex h-11 items-center">
+                  <input
+                    type="number"
+                    min="0"
+                    [(ngModel)]="row.daysThreshold"
+                    (ngModelChange)="markChanged()"
+                    placeholder="No threshold"
+                    class="h-full w-full bg-transparent px-4 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+                  />
+                  @if (row.daysThreshold !== null) {
+                    <button
+                      type="button"
+                      class="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      aria-label="Clear threshold"
+                      (click)="clearThreshold(row)"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  }
+                </div>
               </td>
               <td class="p-0 text-center">
                 <button
@@ -135,7 +150,7 @@ export class TaskMappingPage {
   protected addRow(): void {
     this.rows.update((rows) => [
       ...rows,
-      { localId: this.nextLocalId++, name: '', type: STATE_TYPES.TODO, daysThreshold: 0 },
+      { localId: this.nextLocalId++, name: '', type: STATE_TYPES.TODO, daysThreshold: null },
     ]);
     this.markChanged();
   }
@@ -149,6 +164,11 @@ export class TaskMappingPage {
     this.version.update((v) => v + 1);
   }
 
+  protected clearThreshold(row: MappingRow): void {
+    row.daysThreshold = null;
+    this.markChanged();
+  }
+
   protected submit(): void {
     this.saving.set(true);
     this.error.set(null);
@@ -156,7 +176,7 @@ export class TaskMappingPage {
       id,
       name,
       type,
-      daysThreshold: Number(daysThreshold) || 0,
+      daysThreshold: daysThreshold === null ? null : Number(daysThreshold),
     }));
     this.api.saveStates(payload).subscribe({
       next: (states) => {

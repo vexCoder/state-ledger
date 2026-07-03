@@ -7,7 +7,7 @@ interface SaveStateDto {
   id?: string;
   name: string;
   type: number;
-  daysThreshold: number;
+  daysThreshold: number | null;
 }
 
 @Controller()

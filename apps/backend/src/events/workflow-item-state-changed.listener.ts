@@ -12,7 +12,7 @@ export class WorkflowItemStateChangedListener {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  @OnEvent(WORKFLOW_ITEM_STATE_CHANGED, { async: true })
+  @OnEvent(WORKFLOW_ITEM_STATE_CHANGED)
   async writeLedger(event: WorkflowItemStateChangedEvent) {
     const state = await this.prisma.state.findUnique({ where: { id: event.toStateId } });
     if (!state) {

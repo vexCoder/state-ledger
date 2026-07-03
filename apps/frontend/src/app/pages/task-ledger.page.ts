@@ -43,8 +43,8 @@ interface LedgerGroup {
                 <td class="whitespace-nowrap border-r border-border px-4 py-2.5 text-center text-muted-foreground">
                   @if (item.daysInState !== null) {
                     <span
-                      [class.text-red-600]="item.daysInState > item.currentState.daysThreshold"
-                      [class.font-semibold]="item.daysInState > item.currentState.daysThreshold"
+                      [class.text-red-600]="exceedsThreshold(item)"
+                      [class.font-semibold]="exceedsThreshold(item)"
                       >{{ item.daysInState }}</span
                     >
                   } @else {
@@ -186,6 +186,14 @@ export class TaskLedgerPage {
   protected updateStatus(item: WorkflowItem, state: State): void {
     this.store.updateStatus(item, state);
     this.closeModal();
+  }
+
+  protected exceedsThreshold(item: WorkflowItem): boolean {
+    return (
+      item.currentState.daysThreshold !== null &&
+      item.daysInState !== null &&
+      item.daysInState > item.currentState.daysThreshold
+    );
   }
 
   protected badgeClass(type: number): string {

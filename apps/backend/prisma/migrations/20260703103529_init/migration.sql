@@ -3,7 +3,7 @@ CREATE TABLE "State" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "type" INTEGER NOT NULL,
-    "daysThreshold" INTEGER NOT NULL,
+    "daysThreshold" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );

@@ -5,12 +5,12 @@ process.env.DATABASE_URL ??= 'file:./dev.sqlite';
 const prisma = new PrismaClient();
 
 const STATES = [
-  { name: 'To Do', type: 1, daysThreshold: 0 },
+  { name: 'To Do', type: 1, daysThreshold: null },
   { name: 'In Progress', type: 2, daysThreshold: 10 },
   { name: 'In Review', type: 2, daysThreshold: 3 },
   { name: 'In Signing', type: 2, daysThreshold: 3 },
-  { name: 'On Hold', type: 3, daysThreshold: 0 },
-  { name: 'Completed', type: 4, daysThreshold: 0 },
+  { name: 'On Hold', type: 3, daysThreshold: 5 },
+  { name: 'Completed', type: 4, daysThreshold: null },
 ];
 
 const TASK_NAMES = [
