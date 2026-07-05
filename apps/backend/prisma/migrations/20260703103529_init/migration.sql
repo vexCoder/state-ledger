@@ -5,7 +5,8 @@ CREATE TABLE "State" (
     "type" INTEGER NOT NULL,
     "daysThreshold" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" DATETIME NOT NULL,
+    "deletedAt" DATETIME
 );
 
 -- CreateTable
@@ -31,6 +32,7 @@ CREATE TABLE "StateLedger" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "workflowItemId" TEXT NOT NULL,
     "stateId" TEXT NOT NULL,
+    "stateName" TEXT NOT NULL,
     "stateType" INTEGER NOT NULL,
     "dateStart" DATETIME,
     "dateEnd" DATETIME,

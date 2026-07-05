@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Put } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Param, Patch, Put } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { TimeService } from './time.service';
 import { WorkflowItemService } from './workflow-item.service';
@@ -36,28 +36,53 @@ export class AppController {
 
   @Get('states')
   getStates() {
-    return this.prisma.state.findMany({ orderBy: { createdAt: 'asc' } });
+    return this.prisma.state.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: 'asc' },
+    });
   }
 
   @Put('states')
   async saveStates(@Body() states: SaveStateDto[]) {
     const incomingIds = states.filter((s) => s.id).map((s) => s.id as string);
 
-    await this.prisma.$transaction([
-      this.prisma.state.deleteMany({ where: { id: { notIn: incomingIds } } }),
-      ...states.map((s) =>
-        s.id
-          ? this.prisma.state.update({
-              where: { id: s.id },
-              data: { name: s.name, type: s.type, daysThreshold: s.daysThreshold },
-            })
-          : this.prisma.state.create({
-              data: { name: s.name, type: s.type, daysThreshold: s.daysThreshold },
-            }),
-      ),
-    ]);
+    await this.prisma.$transaction(async (tx) => {
+      const blocked = await tx.state.findMany({
+        where: {
+          id: { notIn: incomingIds },
+          deletedAt: null,
+          workflowItems: { some: {} },
+        },
+        select: { name: true },
+      });
+      if (blocked.length > 0) {
+        const names = blocked.map((s) => s.name);
+        throw new ConflictException({
+          message: `States still in use by workflow items: ${names.join(', ')}`,
+          blockedStates: names,
+        });
+      }
 
-    return this.prisma.state.findMany({ orderBy: { createdAt: 'asc' } });
+      await tx.state.updateMany({
+        where: { id: { notIn: incomingIds }, deletedAt: null },
+        data: { deletedAt: this.time.now() },
+      });
+
+      for (const s of states) {
+        if (s.id) {
+          await tx.state.update({
+            where: { id: s.id },
+            data: { name: s.name, type: s.type, daysThreshold: s.daysThreshold },
+          });
+        } else {
+          await tx.state.create({
+            data: { name: s.name, type: s.type, daysThreshold: s.daysThreshold },
+          });
+        }
+      }
+    });
+
+    return this.getStates();
   }
 
   @Get('workflow-items')

@@ -64,7 +64,7 @@ export class WorkflowItemService {
 
   async changeState(itemId: string, stateId: string) {
     const state = await this.prisma.state.findUnique({ where: { id: stateId } });
-    if (!state) throw new NotFoundException(`State ${stateId} not found`);
+    if (!state || state.deletedAt) throw new NotFoundException(`State ${stateId} not found`);
 
     const item = await this.prisma.workflowItem.findUnique({ where: { id: itemId } });
     if (!item) throw new NotFoundException(`Workflow item ${itemId} not found`);

@@ -65,6 +65,7 @@ async function main() {
         {
           workflowItemId: item.id,
           stateId: todo.id,
+          stateName: todo.name,
           stateType: todo.type,
           dateStart: null,
           dateEnd: null,
@@ -76,6 +77,7 @@ async function main() {
       {
         workflowItemId: item.id,
         stateId: todo.id,
+        stateName: todo.name,
         stateType: todo.type,
         dateStart: null,
         dateEnd: transitionedAt,
@@ -83,6 +85,7 @@ async function main() {
       {
         workflowItemId: item.id,
         stateId: item.currentStateId,
+        stateName: item.currentState.name,
         stateType: item.currentState.type,
         dateStart: transitionedAt,
         dateEnd: null,

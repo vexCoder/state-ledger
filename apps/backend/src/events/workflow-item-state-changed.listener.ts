@@ -29,6 +29,7 @@ export class WorkflowItemStateChangedListener {
         data: {
           workflowItemId: event.workflowItemId,
           stateId: state.id,
+          stateName: state.name,
           stateType: state.type,
           dateStart: event.changedAt,
         },

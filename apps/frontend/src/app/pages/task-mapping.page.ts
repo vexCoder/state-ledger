@@ -183,8 +183,13 @@ export class TaskMappingPage {
         this.reset(states);
         this.saving.set(false);
       },
-      error: () => {
-        this.error.set('Save failed. A state might still be in use by workflow items.');
+      error: (err) => {
+        const blocked = err?.error?.blockedStates as string[] | undefined;
+        this.error.set(
+          blocked?.length
+            ? `Cannot delete state(s) still in use: ${blocked.join(', ')}. Move those workflow items to another state first.`
+            : 'Save failed. Please try again.',
+        );
         this.saving.set(false);
       },
     });

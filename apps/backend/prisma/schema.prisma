@@ -14,6 +14,7 @@ model State {
   daysThreshold Int?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
   workflowItems WorkflowItem[]
   ledgerEntries StateLedger[]
 }
@@ -42,6 +43,7 @@ model StateLedger {
   workflowItem   WorkflowItem @relation(fields: [workflowItemId], references: [id])
   stateId        String
   state          State        @relation(fields: [stateId], references: [id])
+  stateName      String
   stateType      Int
   dateStart      DateTime?
   dateEnd        DateTime?
